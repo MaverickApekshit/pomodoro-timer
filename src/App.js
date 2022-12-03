@@ -2,27 +2,29 @@ import { useState } from "react";
 
 import Timer from "./components/Timer";
 import "./App.css";
-import Settings from "./components/Settings";
-import SettingsContext from "./SettingsContext";
+import SettingsContext from "./store/settings-context";
+
+// Initial Variables
+const workTime = 25;
+const breakTime = 5;
+const workColor = "#f54e4e";
+const breakColor = "#4aec8c";
 
 function App() {
-  const [showSettings, setShowSettings] = useState(false);
-  const [workMinutes, setWorkMinutes] = useState(25);
-  const [breakMinutes, setBreakMinutes] = useState(5);
+  const [breakMinutes, setBreakMinutes] = useState(breakTime);
 
   return (
     <main>
       <SettingsContext.Provider
         value={{
-          showSettings,
-          setShowSettings,
-          workMinutes,
+          workMinutes: workTime,
           breakMinutes,
-          setWorkMinutes,
           setBreakMinutes,
+          workColor,
+          breakColor,
         }}
       >
-        {showSettings ? <Settings /> : <Timer />}
+        <Timer />
       </SettingsContext.Provider>
     </main>
   );
