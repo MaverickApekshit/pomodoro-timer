@@ -1,6 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
+
+import SettingsContext from "../store/settings-context";
+import "./Sessions.css";
 
 function Sessions(props) {
+  const settingsInfo = useContext(SettingsContext);
+
   const [sessions, setSessions] = useState(0);
   const sessionsRef = useRef(sessions);
 
@@ -8,11 +13,11 @@ function Sessions(props) {
     if (props.mode === "break") {
       sessionsRef.current++;
       setSessions(sessionsRef.current);
-      // if (sessionsRef.current % 4 === 0) {
-      //   breakMinutes = 15;
-      // } else {
-      //   breakMinutes = 5;
-      // }
+      if (sessionsRef.current % 4 === 0) {
+        settingsInfo.setBreakMinutes(15);
+      } else {
+        settingsInfo.setBreakMinutes(5);
+      }
     }
   }, [props.mode]);
 

@@ -1,21 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
+import SettingsContext from "../store/settings-context";
 import Sessions from "./Sessions";
 import PlayButton from "./PlayButton";
 import PauseButton from "./PauseButton";
 
 import "./Timer.css";
 
-// Initial Variables
-const workMinutes = 25;
-let breakMinutes = 5;
-const workColor = "#f54e4e";
-const breakColor = "#4aec8c";
-
 function Timer() {
+  const settingsInfo = useContext(SettingsContext);
+
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [mode, setMode] = useState("work");
   const [isPaused, setIsPaused] = useState(true);
@@ -28,7 +25,10 @@ function Timer() {
   function switchMode() {
     const nextMode = modeRef.current === "work" ? "break" : "work";
 
-    let nextSeconds = (nextMode === "work" ? workMinutes : breakMinutes) * 60;
+    const nextSeconds =
+      (nextMode === "work"
+        ? settingsInfo.workMinutes
+        : settingsInfo.breakMinutes) * 60;
 
     // Switch mode
     setMode(nextMode);
@@ -46,7 +46,9 @@ function Timer() {
   }
 
   useEffect(() => {
-    secondsLeftRef.current = workMinutes * 60;
+    secondsLeftRef.current =
+      (mode === "work" ? settingsInfo.workMinutes : settingsInfo.breakMinutes) *
+      60;
     setSecondsLeft(secondsLeftRef.current);
 
     const interval = setInterval(() => {
@@ -61,9 +63,12 @@ function Timer() {
     }, 10);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [settingsInfo]);
 
-  const totalSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
+  const totalSeconds =
+    mode === "work"
+      ? settingsInfo.workMinutes * 60
+      : settingsInfo.breakMinutes * 60;
 
   //Calculate the percentage for loading bar
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
@@ -82,7 +87,8 @@ function Timer() {
         text={`${minutes}:${seconds}`}
         styles={buildStyles({
           textColor: "#fff",
-          pathColor: mode === "work" ? workColor : breakColor,
+          pathColor:
+            mode === "work" ? settingsInfo.workColor : settingsInfo.breakColor,
           tailColor: "rgba(255, 255, 255, 0.2)",
         })}
       />
