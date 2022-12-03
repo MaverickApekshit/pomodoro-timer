@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 import ReactSlider from "react-slider";
 
-import SettingsContext from "../SettingsContext";
+import SettingsContext from "../store/settings-context";
 import BackButton from "./BackButton";
 
 import "./Slider.css";
@@ -11,7 +11,7 @@ function Settings() {
   const settingsInfo = useContext(SettingsContext);
 
   return (
-    <div style={{ textAlign: "left" }}>
+    <div className="container" style={{ textAlign: "left" }}>
       <label>Work Minutes: {settingsInfo.workMinutes}:00</label>
       <ReactSlider
         className={"slider"}

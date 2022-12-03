@@ -1,0 +1,10 @@
+.container {
+  width: 100%;
+  max-width: 340px;
+  margin: 20px;
+}
+
+.sessions {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}

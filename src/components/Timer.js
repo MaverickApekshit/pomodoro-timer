@@ -1,66 +1,52 @@
-import { useContext, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-import SettingsContext from "../SettingsContext";
+import Sessions from "./Sessions";
 import PlayButton from "./PlayButton";
 import PauseButton from "./PauseButton";
-import SettingsButton from "./SettingsButton";
 
-const red = "#f54e4e";
-const green = "#4aec8c";
+import "./Timer.css";
+
+// Initial Variables
+const workMinutes = 25;
+let breakMinutes = 5;
+const workColor = "#f54e4e";
+const breakColor = "#4aec8c";
 
 function Timer() {
-  const settingsInfo = useContext(SettingsContext);
-
-  const [isPaused, setIsPaused] = useState(true);
-  const [mode, setMode] = useState("work");
   const [secondsLeft, setSecondsLeft] = useState(0);
+  const [mode, setMode] = useState("work");
+  const [isPaused, setIsPaused] = useState(true);
 
   const secondsLeftRef = useRef(secondsLeft);
-  const isPausedRef = useRef(isPaused);
   const modeRef = useRef(mode);
+  const isPausedRef = useRef(isPaused);
 
+  // Switch between work and break mode
   function switchMode() {
     const nextMode = modeRef.current === "work" ? "break" : "work";
-    const nextSeconds =
-      (nextMode === "work"
-        ? settingsInfo.workMinutes
-        : settingsInfo.breakMinutes) * 60;
 
+    let nextSeconds = (nextMode === "work" ? workMinutes : breakMinutes) * 60;
+
+    // Switch mode
     setMode(nextMode);
     modeRef.current = nextMode;
 
+    // Switch time to work/break time
     setSecondsLeft(nextSeconds);
     secondsLeftRef.current = nextSeconds;
   }
 
-  function initTimer() {
-    setSecondsLeft(settingsInfo.workMinutes * 60);
-  }
-
+  // Reduce the time
   function tick() {
     secondsLeftRef.current--;
     setSecondsLeft(secondsLeftRef.current);
   }
 
   useEffect(() => {
-    function switchMode() {
-      const nextMode = modeRef.current === "work" ? "break" : "work";
-      const nextSeconds =
-        (nextMode === "work"
-          ? settingsInfo.workMinutes
-          : settingsInfo.breakMinutes) * 60;
-
-      setMode(nextMode);
-      modeRef.current = nextMode;
-
-      setSecondsLeft(nextSeconds);
-      secondsLeftRef.current = nextSeconds;
-    }
-
-    secondsLeftRef.current = settingsInfo.workMinutes * 60;
+    secondsLeftRef.current = workMinutes * 60;
     setSecondsLeft(secondsLeftRef.current);
 
     const interval = setInterval(() => {
@@ -72,29 +58,31 @@ function Timer() {
       }
 
       tick();
-    }, 1000);
+    }, 10);
 
     return () => clearInterval(interval);
-  }, [settingsInfo]);
+  }, []);
 
-  const totalSeconds =
-    mode === "work"
-      ? settingsInfo.workMinutes * 60
-      : settingsInfo.breakMinutes * 60;
+  const totalSeconds = mode === "work" ? workMinutes * 60 : breakMinutes * 60;
+
+  //Calculate the percentage for loading bar
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
 
+  //Calculete minutes and seconds for displaying the time
   const minutes = Math.floor(secondsLeft / 60);
   let seconds = secondsLeft % 60;
-  if (seconds < 10) seconds = "0" + seconds;
+  if (seconds < 10) seconds += "0";
 
   return (
-    <div>
+    <div className="container">
+      <Sessions mode={mode} />
+
       <CircularProgressbar
         value={percentage}
         text={`${minutes}:${seconds}`}
         styles={buildStyles({
           textColor: "#fff",
-          pathColor: mode === "work" ? red : green,
+          pathColor: mode === "work" ? workColor : breakColor,
           tailColor: "rgba(255, 255, 255, 0.2)",
         })}
       />
@@ -114,9 +102,6 @@ function Timer() {
             }}
           />
         )}
-      </div>
-      <div style={{ marginTop: "20px" }}>
-        <SettingsButton onClick={() => settingsInfo.setShowSettings(true)} />
       </div>
     </div>
   );
