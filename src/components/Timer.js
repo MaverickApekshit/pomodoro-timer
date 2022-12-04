@@ -5,30 +5,41 @@ import "react-circular-progressbar/dist/styles.css";
 
 import SettingsContext from "../store/settings-context";
 import Sessions from "./Sessions";
-import PlayButton from "./PlayButton";
-import PauseButton from "./PauseButton";
+import ControlButtons from "./ControlButtons";
 
 import "./Timer.css";
+
+const workColor = "#f54e4e";
+const breakColor = "#4aec8c";
 
 function Timer() {
   const settingsInfo = useContext(SettingsContext);
 
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [mode, setMode] = useState("work");
-  const [isPaused, setIsPaused] = useState(true);
 
   const secondsLeftRef = useRef(secondsLeft);
   const modeRef = useRef(mode);
-  const isPausedRef = useRef(isPaused);
+
+  // Set break/work time
+  function timeLeft(mode) {
+    return (
+      (mode === "work" ? settingsInfo.workMinutes : settingsInfo.breakMinutes) *
+      60
+    );
+  }
+
+  // Reduce the time
+  function tick() {
+    secondsLeftRef.current--;
+    setSecondsLeft(secondsLeftRef.current);
+  }
 
   // Switch between work and break mode
   function switchMode() {
     const nextMode = modeRef.current === "work" ? "break" : "work";
 
-    const nextSeconds =
-      (nextMode === "work"
-        ? settingsInfo.workMinutes
-        : settingsInfo.breakMinutes) * 60;
+    const nextSeconds = timeLeft(nextMode);
 
     // Switch mode
     setMode(nextMode);
@@ -39,20 +50,12 @@ function Timer() {
     secondsLeftRef.current = nextSeconds;
   }
 
-  // Reduce the time
-  function tick() {
-    secondsLeftRef.current--;
-    setSecondsLeft(secondsLeftRef.current);
-  }
-
   useEffect(() => {
-    secondsLeftRef.current =
-      (mode === "work" ? settingsInfo.workMinutes : settingsInfo.breakMinutes) *
-      60;
+    secondsLeftRef.current = timeLeft(mode);
     setSecondsLeft(secondsLeftRef.current);
 
     const interval = setInterval(() => {
-      if (isPausedRef.current) {
+      if (settingsInfo.isPausedRef.current) {
         return;
       }
       if (secondsLeftRef.current === 0) {
@@ -60,15 +63,13 @@ function Timer() {
       }
 
       tick();
-    }, 10);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [settingsInfo]);
 
-  const totalSeconds =
-    mode === "work"
-      ? settingsInfo.workMinutes * 60
-      : settingsInfo.breakMinutes * 60;
+  //Get total time
+  const totalSeconds = timeLeft(mode);
 
   //Calculate the percentage for loading bar
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
@@ -87,28 +88,12 @@ function Timer() {
         text={`${minutes}:${seconds}`}
         styles={buildStyles({
           textColor: "#fff",
-          pathColor:
-            mode === "work" ? settingsInfo.workColor : settingsInfo.breakColor,
+          pathColor: mode === "work" ? workColor : breakColor,
           tailColor: "rgba(255, 255, 255, 0.2)",
         })}
       />
-      <div style={{ marginTop: "20px" }}>
-        {isPaused ? (
-          <PlayButton
-            onClick={() => {
-              setIsPaused(false);
-              isPausedRef.current = false;
-            }}
-          />
-        ) : (
-          <PauseButton
-            onClick={() => {
-              setIsPaused(true);
-              isPausedRef.current = true;
-            }}
-          />
-        )}
-      </div>
+
+      <ControlButtons />
     </div>
   );
 }
