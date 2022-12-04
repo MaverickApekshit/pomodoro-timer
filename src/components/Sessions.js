@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import SettingsContext from "../store/settings-context";
 import "./Sessions.css";
@@ -7,23 +7,30 @@ function Sessions(props) {
   const settingsInfo = useContext(SettingsContext);
 
   const [sessions, setSessions] = useState(0);
-  const sessionsRef = useRef(sessions);
+  const [message, setMessage] = useState("Focus!");
 
   useEffect(() => {
     if (props.mode === "break") {
-      sessionsRef.current++;
-      setSessions(sessionsRef.current);
-      if (sessionsRef.current % 4 === 0) {
+      //Increase session count
+      setSessions(sessions + 1);
+
+      //Set long break after 4th pomodoro
+      if ((sessions + 1) % 4 === 0) {
         settingsInfo.setBreakMinutes(15);
+        setMessage("Relax...");
       } else {
         settingsInfo.setBreakMinutes(5);
+        setMessage("Take a break!");
       }
+    } else {
+      setMessage("Focus!");
     }
   }, [props.mode]);
 
   return (
-    <div className="sessions">
-      <p>Pomodoros: {sessions}</p>
+    <div>
+      <p className="sessions">Pomodoros: {sessions}</p>
+      <p className="message">{message}</p>
     </div>
   );
 }

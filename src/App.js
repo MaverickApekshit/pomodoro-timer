@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import Timer from "./components/Timer";
 import "./App.css";
@@ -7,21 +7,28 @@ import SettingsContext from "./store/settings-context";
 // Initial Variables
 const workTime = 25;
 const breakTime = 5;
-const workColor = "#f54e4e";
-const breakColor = "#4aec8c";
 
 function App() {
+  const [session, setSession] = useState(0);
   const [breakMinutes, setBreakMinutes] = useState(breakTime);
+  const [reset, setReset] = useState(false);
+  const isPausedRef = useRef(true);
+
+  // setIsPaused(isPausedRef.current);
 
   return (
     <main>
       <SettingsContext.Provider
         value={{
+          session,
+          setSession,
           workMinutes: workTime,
+          breakTime,
           breakMinutes,
           setBreakMinutes,
-          workColor,
-          breakColor,
+          isPausedRef,
+          reset,
+          setReset,
         }}
       >
         <Timer />
