@@ -6,12 +6,13 @@ import SettingsContext from "./store/settings-context";
 
 // Initial Variables
 const workTime = 25;
-const breakTime = 5;
+const shortBreakTime = 5;
+const longBreakTime = 15;
 
 function App() {
-  const [session, setSession] = useState(0);
-  const [breakMinutes, setBreakMinutes] = useState(breakTime);
+  const [breakMinutes, setBreakMinutes] = useState(shortBreakTime);
   const [reset, setReset] = useState(false);
+
   const isPausedRef = useRef(true);
 
   // setIsPaused(isPausedRef.current);
@@ -20,10 +21,9 @@ function App() {
     <main>
       <SettingsContext.Provider
         value={{
-          session,
-          setSession,
           workMinutes: workTime,
-          breakTime,
+          shortBreakTime,
+          longBreakTime,
           breakMinutes,
           setBreakMinutes,
           isPausedRef,
