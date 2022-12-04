@@ -10,8 +10,10 @@ const shortBreakTime = 5;
 const longBreakTime = 15;
 
 function App() {
+  const [session, setSession] = useState(0);
   const [breakMinutes, setBreakMinutes] = useState(shortBreakTime);
   const [reset, setReset] = useState(false);
+  const [mode, setMode] = useState("work");
 
   const isPausedRef = useRef(true);
 
@@ -21,6 +23,10 @@ function App() {
     <main>
       <SettingsContext.Provider
         value={{
+          session,
+          setSession,
+          mode,
+          setMode,
           workMinutes: workTime,
           shortBreakTime,
           longBreakTime,

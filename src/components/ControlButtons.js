@@ -21,7 +21,8 @@ function ControlButtons() {
 
   function onResetHandler() {
     settingsInfo.setSession(0);
-    settingsInfo.setBreakMinutes(settingsInfo.breakTime);
+    settingsInfo.setMode("work");
+    settingsInfo.setBreakMinutes(settingsInfo.shortBreakTime);
     settingsInfo.isPausedRef.current = true;
     setIsPaused(true);
     settingsInfo.setReset(true);

@@ -5,17 +5,15 @@ import "./Sessions.css";
 
 function Sessions(props) {
   const settingsInfo = useContext(SettingsContext);
-
-  const [sessions, setSessions] = useState(0);
   const [message, setMessage] = useState("Focus!");
 
   useEffect(() => {
     if (props.mode === "break") {
       //Increase session count
-      setSessions(sessions + 1);
+      settingsInfo.setSession(settingsInfo.session + 1);
 
       //Set long break after 4th pomodoro
-      if ((sessions + 1) % 4 === 0) {
+      if ((settingsInfo.session + 1) % 4 === 0) {
         settingsInfo.setBreakMinutes(settingsInfo.longBreakTime);
         setMessage("Relax...");
       } else {
@@ -25,11 +23,11 @@ function Sessions(props) {
     } else {
       setMessage("Focus!");
     }
-  }, [props.mode]);
+  }, [props.mode, SettingsContext.session]);
 
   return (
     <div>
-      <p className="sessions">Pomodoros: {sessions}</p>
+      <p className="sessions">Pomodoros: {settingsInfo.session}</p>
       <p className="message">{message}</p>
     </div>
   );

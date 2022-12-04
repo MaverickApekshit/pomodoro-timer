@@ -16,10 +16,8 @@ function Timer() {
   const settingsInfo = useContext(SettingsContext);
 
   const [secondsLeft, setSecondsLeft] = useState(0);
-  const [mode, setMode] = useState("work");
 
   const secondsLeftRef = useRef(secondsLeft);
-  const modeRef = useRef(mode);
 
   // Set break/work time
   function timeLeft(mode) {
@@ -37,13 +35,12 @@ function Timer() {
 
   // Switch between work and break mode
   function switchMode() {
-    const nextMode = modeRef.current === "work" ? "break" : "work";
+    const nextMode = settingsInfo.mode === "work" ? "break" : "work";
 
     const nextSeconds = timeLeft(nextMode);
 
     // Switch mode
-    setMode(nextMode);
-    modeRef.current = nextMode;
+    settingsInfo.setMode(nextMode);
 
     // Switch time to work/break time
     setSecondsLeft(nextSeconds);
@@ -51,7 +48,7 @@ function Timer() {
   }
 
   useEffect(() => {
-    secondsLeftRef.current = timeLeft(mode);
+    secondsLeftRef.current = timeLeft(settingsInfo.mode);
     setSecondsLeft(secondsLeftRef.current);
 
     const interval = setInterval(() => {
@@ -63,13 +60,13 @@ function Timer() {
       }
 
       tick();
-    }, 1000);
+    }, 10);
 
     return () => clearInterval(interval);
   }, [settingsInfo]);
 
   //Get total time
-  const totalSeconds = timeLeft(mode);
+  const totalSeconds = timeLeft(settingsInfo.mode);
 
   //Calculate the percentage for loading bar
   const percentage = Math.round((secondsLeft / totalSeconds) * 100);
@@ -81,14 +78,14 @@ function Timer() {
 
   return (
     <div className="container">
-      <Sessions mode={mode} />
+      <Sessions mode={settingsInfo.mode} />
 
       <CircularProgressbar
         value={percentage}
         text={`${minutes}:${seconds}`}
         styles={buildStyles({
           textColor: "#fff",
-          pathColor: mode === "work" ? workColor : breakColor,
+          pathColor: settingsInfo.mode === "work" ? workColor : breakColor,
           tailColor: "rgba(255, 255, 255, 0.2)",
         })}
       />
