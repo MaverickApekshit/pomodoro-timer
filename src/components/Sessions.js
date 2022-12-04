@@ -16,10 +16,10 @@ function Sessions(props) {
 
       //Set long break after 4th pomodoro
       if ((sessions + 1) % 4 === 0) {
-        settingsInfo.setBreakMinutes(15);
+        settingsInfo.setBreakMinutes(settingsInfo.longBreakTime);
         setMessage("Relax...");
       } else {
-        settingsInfo.setBreakMinutes(5);
+        settingsInfo.setBreakMinutes(settingsInfo.shortBreakTime);
         setMessage("Take a break!");
       }
     } else {
