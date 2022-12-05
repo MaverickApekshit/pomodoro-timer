@@ -60,7 +60,7 @@ function Timer() {
       }
 
       tick();
-    }, 10);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [settingsInfo]);
@@ -84,6 +84,7 @@ function Timer() {
         value={percentage}
         text={`${minutes}:${seconds}`}
         styles={buildStyles({
+          textSize: "1.6rem",
           textColor: "#fff",
           pathColor: settingsInfo.mode === "work" ? workColor : breakColor,
           tailColor: "rgba(255, 255, 255, 0.2)",

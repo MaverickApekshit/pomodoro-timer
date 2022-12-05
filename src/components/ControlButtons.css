@@ -10,3 +10,13 @@ button {
   width: 100px;
   cursor: pointer;
 }
+
+button:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+button:hover svg path {
+  -webkit-box-shadow: 6px 6px 41px 3px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 6px 6px 41px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: 6px 6px 41px 3px rgba(0, 0, 0, 0.6);
+}
